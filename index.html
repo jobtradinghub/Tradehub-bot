@@ -1,98 +1,167 @@
 <!DOCTYPE html>
-<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Tradehub.pro bot - RSI 50 SIKU ZOTE</title>
+<html lang="sw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tradehub.pro - RSI 50 BOT</title>
 <style>
-body{margin:0;background:#05080f;color:#fff;font-family:Arial;display:flex;justify-content:center;padding:8px}
-.phone{width:360px;background:#0a101d;border-radius:28px;border:2px solid #1e293b;padding:12px;box-shadow:0 0 40px #0f172a}
-.top{font-weight:bold;text-align:center;font-size:13px;letter-spacing:1px}
-.logo{font-size:22px;font-weight:900;color:#22f59a;display:flex;align-items:center;gap:8px;justify-content:center;margin:12px 0}
-.tabs{display:flex;gap:6px}
-.tab{flex:1;padding:9px;border-radius:10px;border:none;font-weight:bold;font-size:10px}
-.tab.active{background:#22c55e;color:#fff}
-.tab.idle{background:#1e293b;color:#aaa}
-.card{background:#101a2a;border-radius:14px;padding:10px;margin-top:10px;border:1px solid #1e293b}
-.rsiTitle{color:#22c55e;font-weight:bold;font-size:11px}
-.chartBox{height:120px;background:#0a1220;border-radius:10px;margin:8px 0;position:relative;overflow:hidden}
-canvas{width:100%;height:100%}
-.grid4{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
-.box{background:#1e293b;border-radius:12px;padding:12px;text-align:left}
-.box b{font-size:11px}
-.perc{font-size:26px;font-weight:900}
-.even{color:#3b82f6} .odd{color:#22f59a}
-.buy{flex:1;padding:14px;border:none;border-radius:14px;font-weight:900;color:#fff}
-.buyG{background:#16a34a} .sellB{background:#2563eb}
-.profitBox{background:#052e16;border-radius:10px;padding:8px;margin-top:8px;font-size:11px}
-.prog{height:6px;background:#1e293b;border-radius:10px;margin-top:6px;overflow:hidden}
-.fill{height:100%;background:linear-gradient(90deg,#22c55e,#3b82f6);width:0%}
-.small{font-size:10px;color:#64748b}
+*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui}
+body{background:#0a0f1f;color:#fff;display:flex;justify-content:center;padding:12px;min-height:100vh}
+.card{background:#111a2e;border:1px solid #1f2d4a;border-radius:24px;width:100%;max-width:420px;padding:16px;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+.top{text-align:center;color:#8aa0c2;font-size:11px;display:flex;justify-content:space-between}
+h1{color:#2cf68a;text-align:center;margin:10px 0;font-size:20px}
+.box{background:#0e1a30;border-radius:16px;padding:12px;border:1px solid #1e314f}
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:12px 0}
+.stat{background:#0e1a30;border:1px solid #1e314f;border-radius:12px;padding:8px;text-align:center}
+.stat b{display:block;font-size:12px}
+.stat span{font-size:9px;color:#8aa0c2}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{border:0;border-radius:14px;padding:14px;font-weight:800;cursor:pointer}
+.btn-buy{background:#0fbf6a;color:#fff}
+.btn-sell{background:#2a64ff;color:#fff}
+.conn{background:#0c2a1a;border:1px solid #1f5a35;border-radius:14px;padding:12px;margin-top:12px}
+.bal-row{display:flex;justify-content:space-between;padding:5px 0;font-size:13px;border-bottom:1px solid #123a25}
+.bal-row:last-child{border:0}
+.start{width:100%;background:linear-gradient(90deg,#1ed760,#2cf68a);color:#000;border:0;border-radius:14px;padding:15px;font-weight:900;margin-top:10px;cursor:pointer;font-size:15px}
+.log{height:90px;background:#060c1a;border-radius:10px;margin-top:10px;padding:8px;font-size:11px;overflow-y:auto;color:#8fd9a8;border:1px solid #1e314f}
+.status-dot{width:8px;height:8px;border-radius:50%;background:#ff3b3b;display:inline-block}
+.status-dot.ok{background:#1ed760;box-shadow:0 0 8px #1ed760}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;justify-content:center;align-items:center;padding:16px;z-index:99}
+.modal.show{display:flex}
+.modal-box{background:#111a2e;border:1px solid #2cf68a;border-radius:20px;padding:20px;width:100%;max-width:380px;max-height:90vh;overflow-y:auto}
+.tab{padding:10px 16px;border-radius:999px;border:0;font-weight:700;font-size:12px;cursor:pointer;flex:1}
+.tab.active{background:#1ed760;color:#000}
+.tab.inactive{background:#1a2742;color:#8aa0c2}
+input{width:100%;background:#0a1428;border:1px solid #1e314f;color:#fff;border-radius:10px;padding:11px;margin:5px 0}
+.how{background:#0a1428;border-radius:10px;padding:10px;margin:10px 0;font-size:11px;color:#8aa0c2;line-height:1.5}
 </style>
-</head><body>
-<div class="phone">
-<div class="top">9:41 &nbsp;&nbsp; RSI 50 • SIKU ZOTE</div>
-<div class="logo">🤖 Tradehub.pro bot</div>
-<div class="tabs">
-<button id="t1" class="tab active" onclick="showTab('rsi')">TAB 1 • RSI 50 SIKU ZOTE</button>
-<button id="t2" class="tab idle" onclick="showTab('digit')">TAB 2 • EVEN/ODD/OVER/UNDER</button>
+</head>
+<body>
+<div class="card">
+<div class="top"><span id="time">--:--</span><span><span class="status-dot" id="dot"></span> <span id="statusTxt">Hajaunganishwa</span></span><span id="mode">--</span></div>
+<h1>🤖 Tradehub.pro BOT</h1>
+<div class="box">
+<canvas id="c" width="380" height="80" style="width:100%;height:80px;background:#0a1428;border-radius:12px"></canvas>
+<div style="display:flex;justify-content:space-between;margin-top:8px;font-size:13px"><span>EUR/USD OTC: <b id="price">--</b></span><span>RSI: <b id="rsiNum" style="color:#2cf68a">50</b></span></div>
+</div>
+<div class="stats">
+<div class="stat"><span>PROFIT</span><b id="profit">$0 → $15</b></div>
+<div class="stat"><span>DURATION</span><b>15 SEC</b></div>
+<div class="stat"><span>STRATEGY</span><b>RSI 50</b></div>
+</div>
+<div class="btns">
+<button class="btn btn-buy" id="buyBtn">↑ BUY</button>
+<button class="btn btn-sell" id="sellBtn">↓ SELL</button>
+</div>
+<div class="conn">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+<b style="font-size:13px">💰 BALANCES ZAKO</b>
+<button class="tab active" id="connBtn" style="flex:0;padding:8px 14px">Connect</button>
+</div>
+<div class="bal-row"><span>🔴 REAL:</span><b id="balReal">-- Connect --</b></div>
+<div class="bal-row"><span>🟢 DEMO:</span><b id="balDemo">-- Connect --</b></div>
+<div style="font-size:11px;color:#2cf68a;margin-top:8px;font-weight:700">Inayotrade: <span id="accType">Chagua Demo/Real</span></div>
+</div>
+<div style="display:flex;gap:6px;margin:10px 0;align-items:center">
+<label style="font-size:11px">Stake $ <input id="stake" type="number" value="1" style="width:50px;padding:6px;text-align:center"></label>
+<label style="font-size:11px">Target $ <input id="target" type="number" value="15" style="width:50px;padding:6px;text-align:center"></label>
+<label style="font-size:11px"><input type="checkbox" id="marti" checked> Marti x2.1</label>
+</div>
+<button class="start" id="startBtn">▶ ANZA BOT $1 → $15</button>
+<div class="log" id="log">👋 Karibu! Gusa CONNECT kuweka token yako. Bot itaonyesha balance yako ya Real na Demo. Token inabaki kwenye simu yako tu - hatuihifadhi server!</div>
+<div style="text-align:center;font-size:10px;color:#5a6f8e;margin-top:10px">Tradehub.pro • RSI 50 Siku Zote • 15 Sec • Martingale<br>⚠️ Trading ina risk. Tumia akili.</div>
 </div>
 
-<div id="pRsi" class="card">
-<div class="rsiTitle" id="rsiLabel">RSI (14) - 50.00 SIKU ZOTE</div>
-<div>RSI 50 <span style="float:right;color:#94a3b8">50</span></div>
-<div class="chartBox"><canvas id="chart"></canvas></div>
-<div style="display:flex;justify-content:space-between;font-size:11px"><span>30 -----</span><span>70 -----</span></div>
-<div style="margin-top:8px">PRICE: <b id="price">--</b> <span style="background:#1e293b;padding:3px 6px;border-radius:6px;font-size:9px" id="symLabel">EUR/USD • OTC</span></div>
-<div style="display:flex;gap:6px;margin-top:10px">
-<div class="profitBox" style="flex:1">PROFIT:<br><b style="font-size:14px">$<span id="profit">0</span> → $15</b></div>
-<div class="profitBox" style="flex:1">DURATION:<br><b>15 SEC</b> <select id="dur" style="background:#000;color:#fff;border:none;font-size:10px"><option value="5">5</option><option value="10">10</option><option value="15" selected>15</option><option value="30">30</option><option value="60">60</option></select></div>
-<div class="profitBox" style="flex:1">STRATEGY:<br><b>MARTINGALE ON</b></div>
+<div class="modal" id="modal">
+<div class="modal-box">
+<h3 style="color:#2cf68a;margin-bottom:6px">🔑 Unganisha Deriv Yako</h3>
+<p style="font-size:11px;color:#8aa0c2">Kila mtu anaweka token yake. Token inahifadhiwa kwenye simu yako tu (LocalStorage), sio server yetu.</p>
+<div class="how">
+<b>JINSI YA KUPATA TOKEN:</b><br>
+1. Nenda <b>app.deriv.com</b> → Login<br>
+2. Gusa Profile → <b>API Token</b><br>
+3. Chagua <b>Real</b> au <b>Demo</b><br>
+4. Weka jina "bot" → Tick zote → <b>Create</b><br>
+5. <b>COPY</b> token (herufi ndefu) → Paste hapa chini
 </div>
-<div style="display:flex;gap:8px;margin-top:10px">
-<button class="buy buyG" onclick="manualTrade('CALL')">↑ BUY<br><small>+ Profit $15</small></button>
-<button class="buy sellB" onclick="manualTrade('PUT')">↓ SELL<br><small>- Loss Risk</small></button>
+<label style="font-size:12px">🔴 REAL Token:</label>
+<input type="password" id="tokenReal" placeholder="Weka token ya REAL (pesa halisi)">
+<label style="font-size:12px">🟢 DEMO Token:</label>
+<input type="password" id="tokenDemo" placeholder="Weka token ya DEMO ($10k ya mazoezi)">
+<div style="display:flex;gap:8px;margin:12px 0">
+<button class="tab active" id="chooseRealBtn">Trade REAL</button>
+<button class="tab inactive" id="chooseDemoBtn">Trade DEMO</button>
 </div>
-<div class="profitBox" style="margin-top:10px">BALANCE: <b id="balance">-- Connect --</b> <button onclick="connect()" style="background:#22c55e;border:none;padding:4px 8px;border-radius:6px;float:right">Connect</button><br><small>BOT ACTIVE • AUTO TRADE ON SIKU ZOTE</small>
-<div class="prog"><div id="profitFill" class="fill"></div></div>
-<div style="margin-top:6px">Stake $<input id="stake" value="1" style="width:35px;background:#000;color:#fff;border:1px solid #333;padding:4px"> Target $<input id="target" value="15" style="width:35px;background:#000;color:#fff;border:1px solid #333;padding:4px"> Marti <input type="checkbox" id="marti" checked></div>
-<button style="width:100%;margin-top:8px;background:#22c55e;border:none;padding:10px;border-radius:8px;color:#fff;font-weight:bold" onclick="startAuto()">▶️ ANZA SIKU ZOTE $1→$15</button>
+<div style="display:flex;gap:8px">
+<button class="tab inactive" id="cancelBtn">Cancel</button>
+<button class="tab active" id="saveBtn">💾 Hifadhi & Connect</button>
 </div>
+<div style="margin-top:10px;text-align:center"><a href="#" id="clearTokens" style="color:#ff6b6b;font-size:11px">Futa Tokens Zote</a></div>
 </div>
-
-<div id="pDigit" class="card" style="display:none">
-<div style="color:#3b82f6;font-weight:bold;font-size:11px;text-align:center">DIGITS • EVEN / ODD / OVER / UNDER</div>
-<div class="grid4">
-<div class="box"><div>🔥 <b class="even">EVEN</b></div><div class="perc even" id="evenP">48.2%</div><div class="small">WIN RATE • LAST 50 DIGITS</div></div>
-<div class="box"><div>🔥 <b style="color:#a855f7">ODD</b></div><div class="perc" style="color:#22f59a" id="oddP">51.8%</div><div class="small">WIN RATE • LAST 50 DIGITS</div></div>
-<div class="box"><div>🔥 <b class="even">OVER (5-9)</b></div><div class="perc even" id="overP">46.0%</div><div class="small">PROBABILITY • TREND ↑</div></div>
-<div class="box"><div>🔥 <b style="color:#22f59a">UNDER (0-4)</b></div><div class="perc" style="color:#22f59a" id="underP">54.0%</div><div class="small">PROBABILITY • TREND ↓</div></div>
-</div>
-<div class="card" style="background:#0a1220">
-<div style="font-weight:bold">DIGIT PREDICTION</div>
-<div style="color:#22f59a;font-size:12px;margin-top:4px">NEXT DIGIT: <span id="lastDigit">-</span> — PREDICTED: <span id="pred">ODD / OVER</span></div>
-<div class="small">Confidence: <span id="conf">72%</span></div>
-<div class="prog"><div id="confFill" class="fill" style="width:72%"></div></div>
-<div style="display:flex;gap:8px;margin-top:8px">
-<button class="buy buyG" id="digitBuyBtn" onclick="buyDigit()" style="flex:1">🔥 PLAY ODD</button>
-<button class="buy sellB" onclick="setDigitMode('over')" style="flex:1">🔥 PLAY OVER</button>
-</div>
-<div id="digitStats" style="margin-top:8px;background:#000;padding:6px;border-radius:8px;display:flex;flex-wrap:wrap"></div>
-<div id="signalBox" style="margin-top:8px;padding:8px;background:#000;border-radius:8px;text-align:center;font-weight:bold;font-size:11px">Gusa % kubwa 🔥 kubuy SIKU ZOTE</div>
-</div>
-</div>
-
-<div class="small" style="text-align:center;margin-top:8px">Tradehub.pro • Bot Trading Simulation • Demo UI Mockup - SIKU ZOTE</div>
 </div>
 
 <script>
-let ws, prices=[], profit=0, tradeCount=0, lastStake=1, autoRunning=false, digitHistory=[], digitMode='odd', counts=[0,0,0,0,0,0,0,0,0,0];
-function showTab(t){document.getElementById('pRsi').style.display=t=='rsi'?'block':'none'; document.getElementById('pDigit').style.display=t=='digit'?'block':'none'; document.getElementById('t1').className=t=='rsi'?'tab active':'tab idle'; document.getElementById('t2').className=t=='digit'?'tab active':'tab idle';}
-function connect(){let tk=prompt('Deriv Token:'); if(!tk) return; ws=new WebSocket('wss://ws.derivws.com/websockets/v3?app_id=1089'); ws.onopen=()=>ws.send(JSON.stringify({authorize:tk})); ws.onmessage=(e)=>{let d=JSON.parse(e.data); if(d.authorize){document.getElementById('balance').innerText='$'+parseFloat(d.authorize.balance).toFixed(2); subscribe();} if(d.tick){let p=parseFloat(d.tick.quote); document.getElementById('price').innerText=p.toFixed(5); prices.push(p); if(prices.length>100) prices.shift(); calcRSI(); let ld=parseInt(String(d.tick.quote).slice(-1)); digitHistory.push(ld); if(digitHistory.length>200) digitHistory.shift(); document.getElementById('lastDigit').innerText=ld; updateDigits();} if(d.proposal_open_contract&&d.proposal_open_contract.is_sold){let pl=d.proposal_open_contract.profit; profit+=pl; document.getElementById('profit').innerText=profit.toFixed(2); let target=parseFloat(document.getElementById('target').value); document.getElementById('profitFill').style.width=Math.min(100, profit/target*100)+'%'; if(pl<0 && document.getElementById('marti').checked){lastStake*=2.1;} else {lastStake=parseFloat(document.getElementById('stake').value);} document.getElementById('stake').value=lastStake.toFixed(2);}};}
-function subscribe(){ws.send(JSON.stringify({ticks:'R_75',subscribe:1})); ws.send(JSON.stringify({proposal_open_contract:1,subscribe:1}));}
-function calcRSI(){if(prices.length<14) return null; let g=0,l=0; for(let i=prices.length-14;i<prices.length-1;i++){let df=prices[i+1]-prices[i]; if(df>0) g+=df; else l+=-df;} let rs=g/(l||0.001); let rsi=100-(100/(1+rs)); document.getElementById('rsiLabel').innerText='RSI (14) - '+rsi.toFixed(2)+' SIKU ZOTE'; let c=document.getElementById('chart'),ctx=c.getContext('2d'); c.width=c.offsetWidth; c.height=120; ctx.clearRect(0,0,c.width,c.height); let min=Math.min(...prices),max=Math.max(...prices),range=max-min||1; ctx.beginPath(); ctx.strokeStyle='#3b82f6'; ctx.lineWidth=2; prices.forEach((p,i)=>{let x=i/prices.length*c.width; let y=c.height-(p-min)/range*c.height; if(i==0) ctx.moveTo(x,y); else ctx.lineTo(x,y);}); ctx.stroke(); return rsi;}
-function manualTrade(type){if(!ws) return alert('Connect'); let s=parseFloat(document.getElementById('stake').value); let dur=document.getElementById('dur').value; ws.send(JSON.stringify({buy:1,price:s,parameters:{amount:s,basis:'stake',contract_type:type,currency:'USD',duration:dur,duration_unit:'s',symbol:'R_75'}}));}
-async function autoLoop(){while(autoRunning){let rsi=calcRSI(); if(rsi==null){await new Promise(r=>setTimeout(r,800)); continue;} if(rsi>=50){manualTrade('CALL'); await new Promise(r=>setTimeout(r,parseInt(document.getElementById('dur').value)*1000+1500));} else {manualTrade('PUT'); await new Promise(r=>setTimeout(r,parseInt(document.getElementById('dur').value)*1000+1500));}}}
-function startAuto(){if(!ws) return alert('Connect'); autoRunning=true; lastStake=parseFloat(document.getElementById('stake').value); profit=0; autoLoop();}
-function setDigitMode(m){digitMode=m; document.getElementById('digitBuyBtn').innerText='🔥 PLAY '+m.toUpperCase();}
-function updateDigits(){counts=[0,0,0,0,0,0,0,0,0,0]; digitHistory.forEach(x=>counts[x]++); let total=digitHistory.length||1; let even=counts.filter((_,i)=>i%2==0).reduce((a,b)=>a+b,0)/total*100; let odd=100-even; let over=counts.slice(5).reduce((a,b)=>a+b,0)/total*100; let under=100-over; document.getElementById('evenP').innerText=even.toFixed(1)+'%'; document.getElementById('oddP').innerText=odd.toFixed(1)+'%'; document.getElementById('overP').innerText=over.toFixed(1)+'%'; document.getElementById('underP').innerText=under.toFixed(1)+'%'; let html=''; for(let i=0;i<10;i++){let p=counts[i]/total*100; html+=`<span style="padding:4px 6px;margin:2px;border-radius:6px;background:#1e293b;font-size:10px">${i} ${p.toFixed(0)}%${p>15?'🔥':''}</span>`;} document.getElementById('digitStats').innerHTML=html; document.getElementById('conf').innerText=Math.max(even,odd).toFixed(0)+'%'; document.getElementById('confFill').style.width=Math.max(even,odd)+'%';}
-function buyDigit(){if(!ws) return alert('Connect'); let s=parseFloat(document.getElementById('stake').value); let map={even:'DIGITEVEN',odd:'DIGITODD',over:'DIGITOVER',under:'DIGITUNDER'}; let type=map[digitMode]||'DIGITODD'; let p={amount:s,basis:'stake',contract_type:type,currency:'USD',duration:1,duration_unit:'t',symbol:'R_75'}; if(type=='DIGITOVER') p.barrier='4'; if(type=='DIGITUNDER') p.barrier='6'; ws.send(JSON.stringify({buy:1,price:s,parameters:p}));}
+let ws=null,prices=[],rsi=50,profit=0,isRunning=false,currentStake=1;
+let tokens=JSON.parse(localStorage.getItem('deriv_tokens')||'{"REAL":"","DEMO":""}');
+let tradeMode=localStorage.getItem('deriv_mode')||'REAL';
+const log=(m)=>{const l=document.getElementById('log');l.innerHTML=new Date().toLocaleTimeString()+' - '+m+'<br>'+l.innerHTML;};
+const setStatus=(ok,txt)=>{document.getElementById('dot').className='status-dot'+(ok?' ok':'');document.getElementById('statusTxt').textContent=txt;};
+function openModal(){document.getElementById('tokenReal').value=tokens.REAL;document.getElementById('tokenDemo').value=tokens.DEMO;setTradeModeUI(tradeMode);document.getElementById('modal').classList.add('show');}
+function closeModal(){document.getElementById('modal').classList.remove('show');}
+function setTradeModeUI(m){tradeMode=m;document.getElementById('chooseRealBtn').className=m==='REAL'?'tab active':'tab inactive';document.getElementById('chooseDemoBtn').className=m==='DEMO'?'tab active':'tab inactive';}
+document.getElementById('chooseRealBtn').onclick=()=>setTradeModeUI('REAL');
+document.getElementById('chooseDemoBtn').onclick=()=>setTradeModeUI('DEMO');
+document.getElementById('cancelBtn').onclick=closeModal;
+document.getElementById('connBtn').onclick=openModal;
+document.getElementById('clearTokens').onclick=(e)=>{e.preventDefault();if(confirm('Futa tokens zote?')){tokens={REAL:'',DEMO:''};localStorage.removeItem('deriv_tokens');document.getElementById('balReal').textContent='-- Connect --';document.getElementById('balDemo').textContent='-- Connect --';log('Tokens zimefutwa');}};
+document.getElementById('saveBtn').onclick=()=>{
+  tokens.REAL=document.getElementById('tokenReal').value.trim();
+  tokens.DEMO=document.getElementById('tokenDemo').value.trim();
+  if(!tokens.REAL && !tokens.DEMO){alert('Weka angalau token moja!');return;}
+  localStorage.setItem('deriv_tokens',JSON.stringify(tokens));
+  localStorage.setItem('deriv_mode',tradeMode);
+  closeModal();connectAll();
+};
+function connectAll(){
+  if(tokens.REAL) connectBalance('REAL',tokens.REAL);
+  if(tokens.DEMO) connectBalance('DEMO',tokens.DEMO);
+  let t=tokens[tradeMode];
+  if(t) connect(t); else {let other=tradeMode==='REAL'?'DEMO':'REAL'; if(tokens[other]){tradeMode=other;localStorage.setItem('deriv_mode',tradeMode);connect(tokens[other]);}}
+}
+function connectBalance(type,token){
+  let wsB=new WebSocket('wss://ws.derivws.com/websockets/v3?app_id=1089');
+  wsB.onopen=()=>wsB.send(JSON.stringify({authorize:token}));
+  wsB.onmessage=(e)=>{
+    let d=JSON.parse(e.data);
+    if(d.authorize){let b=d.authorize.balance;if(type==='REAL')document.getElementById('balReal').textContent='$'+b.toFixed(2);else document.getElementById('balDemo').textContent='$'+b.toFixed(2);}
+    if(d.balance){if(type==='REAL')document.getElementById('balReal').textContent='$'+d.balance.balance.toFixed(2);else document.getElementById('balDemo').textContent='$'+d.balance.balance.toFixed(2);}
+    if(d.error){if(type==='REAL')document.getElementById('balReal').textContent='Token sio sahihi';else document.getElementById('balDemo').textContent='Token sio sahihi';}
+  };
+}
+function connect(token){
+  if(ws)ws.close();
+  ws=new WebSocket('wss://ws.derivws.com/websockets/v3?app_id=1089');
+  ws.onopen=()=>{log('Ina-connect '+tradeMode+'...');ws.send(JSON.stringify({authorize:token}));};
+  ws.onmessage=onMsg;ws.onerror=()=>{log('Connection error');setStatus(false,'Error');};ws.onclose=()=>{setStatus(false,'Imekatika');};
+}
+function onMsg(evt){
+  const data=JSON.parse(evt.data);
+  if(data.error){log('ERROR: '+data.error.message);if(data.error.code==='InvalidToken')openModal();return;}
+  if(data.authorize){setStatus(true,'Imeunganishwa');document.getElementById('mode').textContent=tradeMode;document.getElementById('accType').textContent=tradeMode+' • '+data.authorize.logininfo.email;log('✅ Karibu '+tradeMode+'! Balance $'+data.authorize.balance);ws.send(JSON.stringify({ticks:'frxEURUSD',subscribe:1}));ws.send(JSON.stringify({ticks_history:'frxEURUSD',count:50,end:'latest',style:'candles',granularity:60}));}
+  if(data.tick){const p=parseFloat(data.tick.quote);document.getElementById('price').textContent=p.toFixed(5);prices.push(p);if(prices.length>50)prices.shift();updateRSI();drawChart();}
+  if(data.candles){prices=data.candles.map(c=>parseFloat(c.close));updateRSI();drawChart();}
+  if(data.buy){log('📈 Trade ID:'+data.buy.contract_id);ws.send(JSON.stringify({proposal_open_contract:1,contract_id:data.buy.contract_id,subscribe:1}));}
+  if(data.proposal_open_contract&&data.proposal_open_contract.is_sold){const pl=data.proposal_open_contract.profit;profit+=pl;document.getElementById('profit').textContent='$'+profit.toFixed(2)+' → $'+document.getElementById('target').value;log((pl>=0?'✅ WIN +$':'❌ LOSS ')+pl.toFixed(2)+' Total $'+profit.toFixed(2));if(pl<0&&document.getElementById('marti').checked){currentStake*=2.1;log('Martingale -> $'+currentStake.toFixed(2));}else{currentStake=parseFloat(document.getElementById('stake').value);}if(profit>=parseFloat(document.getElementById('target').value)){log('🎉 TARGET IMETIMIA!');isRunning=false;document.getElementById('startBtn').textContent='▶ ANZA BOT';return;}if(isRunning)setTimeout(doTrade,1500);}
+}
+function calcRSI(arr,p=14){if(arr.length<p+1)return 50;let g=0,l=0;for(let i=arr.length-p;i<arr.length;i++){let d=arr[i]-arr[i-1];if(d>0)g+=d;else l+=-d;}g/=p;l/=p;if(l===0)return 70;return 100-(100/(1+g/l));}
+function updateRSI(){rsi=calcRSI(prices);document.getElementById('rsiNum').textContent=rsi.toFixed(2);}
+function drawChart(){const cv=document.getElementById('c');const ctx=cv.getContext('2d');ctx.clearRect(0,0,cv.width,cv.height);if(prices.length<2)return;let min=Math.min(...prices),max=Math.max(...prices),range=max-min||1;ctx.beginPath();ctx.strokeStyle='#2cf68a';ctx.lineWidth=2;prices.forEach((p,i)=>{let x=(i/(prices.length-1))*cv.width;let y=cv.height-((p-min)/range)*cv.height*0.8-10;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);});ctx.stroke();}
+function doTrade(){if(!ws||ws.readyState!==1){log('Kwanza Connect!');openModal();return;}let type=rsi<=50?'CALL':'PUT';if(window._manualType)type=window._manualType;const req={buy:1,price:parseFloat(currentStake.toFixed(2)),parameters:{amount:parseFloat(currentStake.toFixed(2)),basis:'stake',contract_type:type,currency:'USD',duration:15,duration_unit:'s',symbol:'frxEURUSD'}};log('Inaweka '+type+' $'+currentStake.toFixed(2)+' ['+tradeMode+'] RSI:'+rsi.toFixed(1));ws.send(JSON.stringify(req));}
+document.getElementById('startBtn').onclick=()=>{if(!ws||ws.readyState!==1){openModal();return;}if(isRunning){isRunning=false;document.getElementById('startBtn').textContent='▶ ANZA BOT';log('Imesimama');return;}isRunning=true;profit=0;currentStake=parseFloat(document.getElementById('stake').value);document.getElementById('startBtn').textContent='⏸ SIMAMISHA BOT';log('🚀 BOT IMEANZA ['+tradeMode+'] Stake $'+currentStake);doTrade();};
+document.getElementById('buyBtn').onclick=()=>{window._manualType='CALL';doTrade();setTimeout(()=>window._manualType=null,1000);};
+document.getElementById('sellBtn').onclick=()=>{window._manualType='PUT';doTrade();setTimeout(()=>window._manualType=null,1000);};
+setInterval(()=>{document.getElementById('time').textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});},1000);
+if(tokens.REAL||tokens.DEMO)connectAll();
 </script>
-</body></html>
+</body>
+</html>
