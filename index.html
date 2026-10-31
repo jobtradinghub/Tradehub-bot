@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tradehub.pro bot - RSI 50 SIKU ZOTE</title>
+<style>
+body{margin:0;background:#05080f;color:#fff;font-family:Arial;display:flex;justify-content:center;padding:8px}
+.phone{width:360px;background:#0a101d;border-radius:28px;border:2px solid #1e293b;padding:12px;box-shadow:0 0 40px #0f172a}
+.top{font-weight:bold;text-align:center;font-size:13px;letter-spacing:1px}
+.logo{font-size:22px;font-weight:900;color:#22f59a;display:flex;align-items:center;gap:8px;justify-content:center;margin:12px 0}
+.tabs{display:flex;gap:6px}
+.tab{flex:1;padding:9px;border-radius:10px;border:none;font-weight:bold;font-size:10px}
+.tab.active{background:#22c55e;color:#fff}
+.tab.idle{background:#1e293b;color:#aaa}
+.card{background:#101a2a;border-radius:14px;padding:10px;margin-top:10px;border:1px solid #1e293b}
+.rsiTitle{color:#22c55e;font-weight:bold;font-size:11px}
+.chartBox{height:120px;background:#0a1220;border-radius:10px;margin:8px 0;position:relative;overflow:hidden}
+canvas{width:100%;height:100%}
+.grid4{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.box{background:#1e293b;border-radius:12px;padding:12px;text-align:left}
+.box b{font-size:11px}
+.perc{font-size:26px;font-weight:900}
+.even{color:#3b82f6} .odd{color:#22f59a}
+.buy{flex:1;padding:14px;border:none;border-radius:14px;font-weight:900;color:#fff}
+.buyG{background:#16a34a} .sellB{background:#2563eb}
+.profitBox{background:#052e16;border-radius:10px;padding:8px;margin-top:8px;font-size:11px}
+.prog{height:6px;background:#1e293b;border-radius:10px;margin-top:6px;overflow:hidden}
+.fill{height:100%;background:linear-gradient(90deg,#22c55e,#3b82f6);width:0%}
+.small{font-size:10px;color:#64748b}
+</style>
+</head><body>
+<div class="phone">
+<div class="top">9:41 &nbsp;&nbsp; RSI 50 • SIKU ZOTE</div>
+<div class="logo">🤖 Tradehub.pro bot</div>
+<div class="tabs">
+<button id="t1" class="tab active" onclick="showTab('rsi')">TAB 1 • RSI 50 SIKU ZOTE</button>
+<button id="t2" class="tab idle" onclick="showTab('digit')">TAB 2 • EVEN/ODD/OVER/UNDER</button>
+</div>
+
+<div id="pRsi" class="card">
+<div class="rsiTitle" id="rsiLabel">RSI (14) - 50.00 SIKU ZOTE</div>
+<div>RSI 50 <span style="float:right;color:#94a3b8">50</span></div>
+<div class="chartBox"><canvas id="chart"></canvas></div>
+<div style="display:flex;justify-content:space-between;font-size:11px"><span>30 -----</span><span>70 -----</span></div>
+<div style="margin-top:8px">PRICE: <b id="price">--</b> <span style="background:#1e293b;padding:3px 6px;border-radius:6px;font-size:9px" id="symLabel">EUR/USD • OTC</span></div>
+<div style="display:flex;gap:6px;margin-top:10px">
+<div class="profitBox" style="flex:1">PROFIT:<br><b style="font-size:14px">$<span id="profit">0</span> → $15</b></div>
+<div class="profitBox" style="flex:1">DURATION:<br><b>15 SEC</b> <select id="dur" style="background:#000;color:#fff;border:none;font-size:10px"><option value="5">5</option><option value="10">10</option><option value="15" selected>15</option><option value="30">30</option><option value="60">60</option></select></div>
+<div class="profitBox" style="flex:1">STRATEGY:<br><b>MARTINGALE ON</b></div>
+</div>
+<div style="display:flex;gap:8px;margin-top:10px">
+<button class="buy buyG" onclick="manualTrade('CALL')">↑ BUY<br><small>+ Profit $15</small></button>
+<button class="buy sellB" onclick="manualTrade('PUT')">↓ SELL<br><small>- Loss Risk</small></button>
+</div>
+<div class="profitBox" style="margin-top:10px">BALANCE: <b id="balance">-- Connect --</b> <button onclick="connect()" style="background:#22c55e;border:none;padding:4px 8px;border-radius:6px;float:right">Connect</button><br><small>BOT ACTIVE • AUTO TRADE ON SIKU ZOTE</small>
+<div class="prog"><div id="profitFill" class="fill"></div></div>
+<div style="margin-top:6px">Stake $<input id="stake" value="1" style="width:35px;background:#000;color:#fff;border:1px solid #333;padding:4px"> Target $<input id="target" value="15" style="width:35px;background:#000;color:#fff;border:1px solid #333;padding:4px"> Marti <input type="checkbox" id="marti" checked></div>
+<button style="width:100%;margin-top:8px;background:#22c55e;border:none;padding:10px;border-radius:8px;color:#fff;font-weight:bold" onclick="startAuto()">▶️ ANZA SIKU ZOTE $1→$15</button>
+</div>
+</div>
+
+<div id="pDigit" class="card" style="display:none">
+<div style="color:#3b82f6;font-weight:bold;font-size:11px;text-align:center">DIGITS • EVEN / ODD / OVER / UNDER</div>
+<div class="grid4">
+<div class="box"><div>🔥 <b class="even">EVEN</b></div><div class="perc even" id="evenP">48.2%</div><div class="small">WIN RATE • LAST 50 DIGITS</div></div>
+<div class="box"><div>🔥 <b style="color:#a855f7">ODD</b></div><div class="perc" style="color:#22f59a" id="oddP">51.8%</div><div class="small">WIN RATE • LAST 50 DIGITS</div></div>
+<div class="box"><div>🔥 <b class="even">OVER (5-9)</b></div><div class="perc even" id="overP">46.0%</div><div class="small">PROBABILITY • TREND ↑</div></div>
+<div class="box"><div>🔥 <b style="color:#22f59a">UNDER (0-4)</b></div><div class="perc" style="color:#22f59a" id="underP">54.0%</div><div class="small">PROBABILITY • TREND ↓</div></div>
+</div>
+<div class="card" style="background:#0a1220">
+<div style="font-weight:bold">DIGIT PREDICTION</div>
+<div style="color:#22f59a;font-size:12px;margin-top:4px">NEXT DIGIT: <span id="lastDigit">-</span> — PREDICTED: <span id="pred">ODD / OVER</span></div>
+<div class="small">Confidence: <span id="conf">72%</span></div>
+<div class="prog"><div id="confFill" class="fill" style="width:72%"></div></div>
+<div style="display:flex;gap:8px;margin-top:8px">
+<button class="buy buyG" id="digitBuyBtn" onclick="buyDigit()" style="flex:1">🔥 PLAY ODD</button>
+<button class="buy sellB" onclick="setDigitMode('over')" style="flex:1">🔥 PLAY OVER</button>
+</div>
+<div id="digitStats" style="margin-top:8px;background:#000;padding:6px;border-radius:8px;display:flex;flex-wrap:wrap"></div>
+<div id="signalBox" style="margin-top:8px;padding:8px;background:#000;border-radius:8px;text-align:center;font-weight:bold;font-size:11px">Gusa % kubwa 🔥 kubuy SIKU ZOTE</div>
+</div>
+</div>
+
+<div class="small" style="text-align:center;margin-top:8px">Tradehub.pro • Bot Trading Simulation • Demo UI Mockup - SIKU ZOTE</div>
+</div>
+
+<script>
+let ws, prices=[], profit=0, tradeCount=0, lastStake=1, autoRunning=false, digitHistory=[], digitMode='odd', counts=[0,0,0,0,0,0,0,0,0,0];
+function showTab(t){document.getElementById('pRsi').style.display=t=='rsi'?'block':'none'; document.getElementById('pDigit').style.display=t=='digit'?'block':'none'; document.getElementById('t1').className=t=='rsi'?'tab active':'tab idle'; document.getElementById('t2').className=t=='digit'?'tab active':'tab idle';}
+function connect(){let tk=prompt('Deriv Token:'); if(!tk) return; ws=new WebSocket('wss://ws.derivws.com/websockets/v3?app_id=1089'); ws.onopen=()=>ws.send(JSON.stringify({authorize:tk})); ws.onmessage=(e)=>{let d=JSON.parse(e.data); if(d.authorize){document.getElementById('balance').innerText='$'+parseFloat(d.authorize.balance).toFixed(2); subscribe();} if(d.tick){let p=parseFloat(d.tick.quote); document.getElementById('price').innerText=p.toFixed(5); prices.push(p); if(prices.length>100) prices.shift(); calcRSI(); let ld=parseInt(String(d.tick.quote).slice(-1)); digitHistory.push(ld); if(digitHistory.length>200) digitHistory.shift(); document.getElementById('lastDigit').innerText=ld; updateDigits();} if(d.proposal_open_contract&&d.proposal_open_contract.is_sold){let pl=d.proposal_open_contract.profit; profit+=pl; document.getElementById('profit').innerText=profit.toFixed(2); let target=parseFloat(document.getElementById('target').value); document.getElementById('profitFill').style.width=Math.min(100, profit/target*100)+'%'; if(pl<0 && document.getElementById('marti').checked){lastStake*=2.1;} else {lastStake=parseFloat(document.getElementById('stake').value);} document.getElementById('stake').value=lastStake.toFixed(2);}};}
+function subscribe(){ws.send(JSON.stringify({ticks:'R_75',subscribe:1})); ws.send(JSON.stringify({proposal_open_contract:1,subscribe:1}));}
+function calcRSI(){if(prices.length<14) return null; let g=0,l=0; for(let i=prices.length-14;i<prices.length-1;i++){let df=prices[i+1]-prices[i]; if(df>0) g+=df; else l+=-df;} let rs=g/(l||0.001); let rsi=100-(100/(1+rs)); document.getElementById('rsiLabel').innerText='RSI (14) - '+rsi.toFixed(2)+' SIKU ZOTE'; let c=document.getElementById('chart'),ctx=c.getContext('2d'); c.width=c.offsetWidth; c.height=120; ctx.clearRect(0,0,c.width,c.height); let min=Math.min(...prices),max=Math.max(...prices),range=max-min||1; ctx.beginPath(); ctx.strokeStyle='#3b82f6'; ctx.lineWidth=2; prices.forEach((p,i)=>{let x=i/prices.length*c.width; let y=c.height-(p-min)/range*c.height; if(i==0) ctx.moveTo(x,y); else ctx.lineTo(x,y);}); ctx.stroke(); return rsi;}
+function manualTrade(type){if(!ws) return alert('Connect'); let s=parseFloat(document.getElementById('stake').value); let dur=document.getElementById('dur').value; ws.send(JSON.stringify({buy:1,price:s,parameters:{amount:s,basis:'stake',contract_type:type,currency:'USD',duration:dur,duration_unit:'s',symbol:'R_75'}}));}
+async function autoLoop(){while(autoRunning){let rsi=calcRSI(); if(rsi==null){await new Promise(r=>setTimeout(r,800)); continue;} if(rsi>=50){manualTrade('CALL'); await new Promise(r=>setTimeout(r,parseInt(document.getElementById('dur').value)*1000+1500));} else {manualTrade('PUT'); await new Promise(r=>setTimeout(r,parseInt(document.getElementById('dur').value)*1000+1500));}}}
+function startAuto(){if(!ws) return alert('Connect'); autoRunning=true; lastStake=parseFloat(document.getElementById('stake').value); profit=0; autoLoop();}
+function setDigitMode(m){digitMode=m; document.getElementById('digitBuyBtn').innerText='🔥 PLAY '+m.toUpperCase();}
+function updateDigits(){counts=[0,0,0,0,0,0,0,0,0,0]; digitHistory.forEach(x=>counts[x]++); let total=digitHistory.length||1; let even=counts.filter((_,i)=>i%2==0).reduce((a,b)=>a+b,0)/total*100; let odd=100-even; let over=counts.slice(5).reduce((a,b)=>a+b,0)/total*100; let under=100-over; document.getElementById('evenP').innerText=even.toFixed(1)+'%'; document.getElementById('oddP').innerText=odd.toFixed(1)+'%'; document.getElementById('overP').innerText=over.toFixed(1)+'%'; document.getElementById('underP').innerText=under.toFixed(1)+'%'; let html=''; for(let i=0;i<10;i++){let p=counts[i]/total*100; html+=`<span style="padding:4px 6px;margin:2px;border-radius:6px;background:#1e293b;font-size:10px">${i} ${p.toFixed(0)}%${p>15?'🔥':''}</span>`;} document.getElementById('digitStats').innerHTML=html; document.getElementById('conf').innerText=Math.max(even,odd).toFixed(0)+'%'; document.getElementById('confFill').style.width=Math.max(even,odd)+'%';}
+function buyDigit(){if(!ws) return alert('Connect'); let s=parseFloat(document.getElementById('stake').value); let map={even:'DIGITEVEN',odd:'DIGITODD',over:'DIGITOVER',under:'DIGITUNDER'}; let type=map[digitMode]||'DIGITODD'; let p={amount:s,basis:'stake',contract_type:type,currency:'USD',duration:1,duration_unit:'t',symbol:'R_75'}; if(type=='DIGITOVER') p.barrier='4'; if(type=='DIGITUNDER') p.barrier='6'; ws.send(JSON.stringify({buy:1,price:s,parameters:p}));}
+</script>
+</body></html>
